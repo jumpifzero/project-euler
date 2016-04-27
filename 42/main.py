@@ -14,11 +14,14 @@
 #
 # Tiago Almeida, 2016
 
+
 def words_list():
 	"""
 	Return a strings list read from file input.txt  
 	"""
-	return ['sky']
+	import re
+	with open('input.txt') as x: f = x.read()
+	return re.compile('"(\w+)"').findall(f)
 
 
 def word_value_list( words_list ):
@@ -48,7 +51,7 @@ def word_value_list( words_list ):
 				words_list )
 
 
-def solve_equation( word_value ):
+def solve_for_n( word_value ):
 	"""
 	Solves the equation word_value = (1/2) * n(n+1)
 	for n. This is done using the quadratic solution 
@@ -69,36 +72,23 @@ def solve_equation( word_value ):
 
 
 
-def has_real_solutions( solutions ):
+def has_real_solution( solutions ):
 	"""
 	Given a list with 2 possible solutions for N,
 	returns True if at least one of them is a natural
 	number
 	"""
-	import functools 
+	import functools
 	return functools.reduce(lambda x,y: x or y, 
 							map(lambda x:x.is_integer(), 
 								solutions))
 
 
-
 def solution():
-	"""
-	High level solution is as follows:
-	Read the words from the file into a string list
-	Map the string list into the corresponding word score
-	Map the word score list into the corresponding N by 
-		inverting the equation
-	Count the items which are natural numbers
-		(the others do not correspond to triangle words
-		as there isn't an N that satisfies the equation)
-	"""
-	from collections import Counter
 	word_values = word_value_list( words_list() )
-	solvables = map(lambda x: has_real_solutions(solve_equation(x)),
-		word_values)
-	# count Trues and Falses, return only number of True occurrences
-	return Counter(solvables)[True]
+	return list(
+		map(lambda w: has_real_solution(solve_for_n( w )),
+			word_values)).count(True)
 
 
 if __name__ == '__main__':
